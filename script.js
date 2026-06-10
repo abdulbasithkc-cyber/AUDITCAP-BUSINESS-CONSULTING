@@ -288,54 +288,87 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
             submitBtn.classList.add('loading');
 
-            // Gather Form Data for Web3Forms submission
+            // Gather Form Data
             const formData = new FormData(inquiryForm);
-            const object = Object.fromEntries(formData);
-            const json = JSON.stringify(object);
+            const accessKey = formData.get('access_key');
 
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: json
-            })
-            .then(async (response) => {
-                const jsonResponse = await response.json();
-                if (response.status === 200) {
+            // Demo Mode fallback for testing without active Web3Forms key
+            if (accessKey === 'YOUR_ACCESS_KEY_HERE' || !accessKey) {
+                console.warn("AUDITCAP: Web3Forms is running in DEMO mode. Staged Payload:", Object.fromEntries(formData));
+                
+                setTimeout(() => {
                     // Display success panel
                     inquiryForm.style.display = 'none';
                     successMessage.style.display = 'block';
-                } else {
-                    console.error("Web3Forms Error:", jsonResponse);
-                    alert("Submission failed: " + (jsonResponse.message || "Please verify your Web3Forms Access Key."));
-                }
-            })
-            .catch(error => {
-                console.error("Network Error:", error);
-                alert("Submission failed. Please verify your internet connection and try again.");
-            })
-            .then(() => {
-                // Restore button state
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
-                
-                // Scroll container back into focus
-                const headerHeight = header.offsetHeight;
-                const formSection = document.getElementById('inquiry');
-                const offsetPosition = formSection.offsetTop - headerHeight;
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                    
+                    // Restore button state
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    
+                    // Scroll container back into focus
+                    const headerHeight = header.offsetHeight;
+                    const formSection = document.getElementById('inquiry');
+                    const offsetPosition = formSection.offsetTop - headerHeight;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
 
-                // Clear input elements
-                inquiryForm.reset();
-                validations.forEach(item => {
-                    item.input.closest('.form-group').classList.remove('has-error');
+                    // Clear input elements
+                    inquiryForm.reset();
+                    validations.forEach(item => {
+                        item.input.closest('.form-group').classList.remove('has-error');
+                    });
+                }, 1200);
+            } else {
+                // Production Mode: Web3Forms POST request
+                const object = Object.fromEntries(formData);
+                const json = JSON.stringify(object);
+
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: json
+                })
+                .then(async (response) => {
+                    const jsonResponse = await response.json();
+                    if (response.status === 200) {
+                        // Display success panel
+                        inquiryForm.style.display = 'none';
+                        successMessage.style.display = 'block';
+                    } else {
+                        console.error("Web3Forms Error:", jsonResponse);
+                        alert("Submission failed: " + (jsonResponse.message || "Please verify your Web3Forms Access Key."));
+                    }
+                })
+                .catch(error => {
+                    console.error("Network Error:", error);
+                    alert("Submission failed. Please verify your internet connection and try again.");
+                })
+                .then(() => {
+                    // Restore button state
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    
+                    // Scroll container back into focus
+                    const headerHeight = header.offsetHeight;
+                    const formSection = document.getElementById('inquiry');
+                    const offsetPosition = formSection.offsetTop - headerHeight;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Clear input elements
+                    inquiryForm.reset();
+                    validations.forEach(item => {
+                        item.input.closest('.form-group').classList.remove('has-error');
+                    });
                 });
-            });
+            }
         } else {
             const firstError = document.querySelector('.form-group.has-error');
             if (firstError) {
