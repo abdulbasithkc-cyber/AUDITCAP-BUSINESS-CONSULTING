@@ -289,6 +289,24 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.add('loading');
 
             setTimeout(() => {
+                // Retrieve form input values
+                const name = document.getElementById('form-name').value.trim();
+                const mobile = document.getElementById('form-mobile').value.trim();
+                const email = document.getElementById('form-email').value.trim();
+                const service = document.getElementById('form-service').value;
+                const message = document.getElementById('form-message').value.trim();
+
+                // Format WhatsApp query text
+                const formattedMessage = `*New Business Inquiry - AUDITCAP*\n\n` +
+                                         `*Name:* ${name}\n` +
+                                         `*Mobile:* ${mobile}\n` +
+                                         `*Email:* ${email}\n` +
+                                         `*Service Required:* ${service}\n\n` +
+                                         `*Message:* ${message}`;
+                
+                const encodedMessage = encodeURIComponent(formattedMessage);
+                const whatsappUrl = `https://wa.me/97333456321?text=${encodedMessage}`;
+
                 inquiryForm.style.display = 'none';
                 successMessage.style.display = 'block';
                 
@@ -307,6 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 validations.forEach(item => {
                     item.input.closest('.form-group').classList.remove('has-error');
                 });
+
+                // Launch WhatsApp Chat in new window tab
+                window.open(whatsappUrl, '_blank');
             }, 1500);
         } else {
             const firstError = document.querySelector('.form-group.has-error');
