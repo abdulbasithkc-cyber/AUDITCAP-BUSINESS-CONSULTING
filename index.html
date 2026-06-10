@@ -251,12 +251,15 @@
                     </div>
                     
                     <form id="inquiryForm" class="inquiry-form" novalidate>
+                        <!-- Web3Forms Access Key: Register at https://web3forms.com to receive key for info.auditcap@gmail.com -->
+                        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                        
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="form-name">Full Name <span class="req">*</span></label>
                                 <div class="input-wrapper">
                                     <i class="fa-solid fa-user"></i>
-                                    <input type="text" id="form-name" placeholder="John Doe" required>
+                                    <input type="text" id="form-name" name="name" placeholder="John Doe" required>
                                 </div>
                                 <span class="error-msg" id="error-name">Please enter your name</span>
                             </div>
@@ -265,7 +268,7 @@
                                 <label for="form-mobile">Mobile Number <span class="req">*</span></label>
                                 <div class="input-wrapper">
                                     <i class="fa-solid fa-phone"></i>
-                                    <input type="tel" id="form-mobile" placeholder="+973 3300 0000" required>
+                                    <input type="tel" id="form-mobile" name="mobile" placeholder="+973 3300 0000" required>
                                 </div>
                                 <span class="error-msg" id="error-mobile">Please enter your mobile number</span>
                             </div>
@@ -276,7 +279,7 @@
                                 <label for="form-email">Email Address <span class="req">*</span></label>
                                 <div class="input-wrapper">
                                     <i class="fa-solid fa-envelope"></i>
-                                    <input type="email" id="form-email" placeholder="example@domain.com" required>
+                                    <input type="email" id="form-email" name="email" placeholder="example@domain.com" required>
                                 </div>
                                 <span class="error-msg" id="error-email">Please enter a valid email address</span>
                             </div>
@@ -285,7 +288,7 @@
                                 <label for="form-service">Service Required <span class="req">*</span></label>
                                 <div class="input-wrapper select-wrapper">
                                     <i class="fa-solid fa-gears"></i>
-                                    <select id="form-service" required>
+                                    <select id="form-service" name="service" required>
                                         <option value="" disabled selected>Select a Service</option>
                                         <option value="Accounting & Bookkeeping">Accounting & Bookkeeping</option>
                                         <option value="VAT & Tax Advisory">VAT & Tax Advisory</option>
@@ -306,7 +309,7 @@
                             <label for="form-message">Message <span class="req">*</span></label>
                             <div class="input-wrapper textarea-wrapper">
                                 <i class="fa-solid fa-message"></i>
-                                <textarea id="form-message" rows="4" placeholder="How can we help your business?" required></textarea>
+                                <textarea id="form-message" name="message" rows="4" placeholder="How can we help your business?" required></textarea>
                             </div>
                             <span class="error-msg" id="error-message">Please write a brief description of your needs</span>
                         </div>

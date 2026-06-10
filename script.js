@@ -288,31 +288,40 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
             submitBtn.classList.add('loading');
 
-            setTimeout(() => {
-                // Retrieve form input values
-                const name = document.getElementById('form-name').value.trim();
-                const mobile = document.getElementById('form-mobile').value.trim();
-                const email = document.getElementById('form-email').value.trim();
-                const service = document.getElementById('form-service').value;
-                const message = document.getElementById('form-message').value.trim();
+            // Gather Form Data for Web3Forms submission
+            const formData = new FormData(inquiryForm);
+            const object = Object.fromEntries(formData);
+            const json = JSON.stringify(object);
 
-                // Format WhatsApp query text
-                const formattedMessage = `*New Business Inquiry - AUDITCAP*\n\n` +
-                                         `*Name:* ${name}\n` +
-                                         `*Mobile:* ${mobile}\n` +
-                                         `*Email:* ${email}\n` +
-                                         `*Service Required:* ${service}\n\n` +
-                                         `*Message:* ${message}`;
-                
-                const encodedMessage = encodeURIComponent(formattedMessage);
-                const whatsappUrl = `https://wa.me/97333456321?text=${encodedMessage}`;
-
-                inquiryForm.style.display = 'none';
-                successMessage.style.display = 'block';
-                
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: json
+            })
+            .then(async (response) => {
+                const jsonResponse = await response.json();
+                if (response.status === 200) {
+                    // Display success panel
+                    inquiryForm.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    console.error("Web3Forms Error:", jsonResponse);
+                    alert("Submission failed: " + (jsonResponse.message || "Please verify your Web3Forms Access Key."));
+                }
+            })
+            .catch(error => {
+                console.error("Network Error:", error);
+                alert("Submission failed. Please verify your internet connection and try again.");
+            })
+            .then(() => {
+                // Restore button state
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('loading');
                 
+                // Scroll container back into focus
                 const headerHeight = header.offsetHeight;
                 const formSection = document.getElementById('inquiry');
                 const offsetPosition = formSection.offsetTop - headerHeight;
@@ -321,14 +330,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     behavior: 'smooth'
                 });
 
+                // Clear input elements
                 inquiryForm.reset();
                 validations.forEach(item => {
                     item.input.closest('.form-group').classList.remove('has-error');
                 });
-
-                // Launch WhatsApp Chat in new window tab
-                window.open(whatsappUrl, '_blank');
-            }, 1500);
+            });
         } else {
             const firstError = document.querySelector('.form-group.has-error');
             if (firstError) {
